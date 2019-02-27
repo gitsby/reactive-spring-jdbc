@@ -1,4 +1,4 @@
-package com.github.gitsby.reactivespringjdbc;
+package com.github.gitsby.reactivespringjdbc.controller.market_watch;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +13,7 @@ public class GreetingRouter {
 
 	@Bean
 	public RouterFunction<ServerResponse> route(GreetingHandler greetingHandler) {
+
 
 		return RouterFunctions
 			.route(RequestPredicates.GET("/hello").and(RequestPredicates.accept(MediaType.TEXT_PLAIN)), greetingHandler::hello);
