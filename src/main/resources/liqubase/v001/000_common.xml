@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet author="maxim" id="create-function-moment">
+    <sql endDelimiter=";;"><![CDATA[
+      create function moment() returns timestamp
+      language plpgsql as 'begin return clock_timestamp(); end ' ;;
+      
+ 
+      create table service_last_result(
+        hash varchar(40) primary key,
+        value jsonb,
+        created_at timestamp not null default clock_timestamp()
+      );;
+    ]]></sql>
+  </changeSet>
+
+</databaseChangeLog>
