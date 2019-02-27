@@ -3,11 +3,12 @@ package com.github.gitsby.reactivespringjdbc;
 import com.github.gitsby.reactivespringjdbc.in_service.marker_watch.MarketWatchInService;
 import com.github.gitsby.reactivespringjdbc.in_service.marker_watch.impl.MarketWatchInServiceImpl;
 import java.security.MessageDigest;
-import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
-import okhttp3.ConnectionPool;
-import okhttp3.OkHttpClient;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.Dsl;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
 @SpringBootApplication
+@MapperScan("com.github.gitsby.reactivespringjdbc.dao")
 public class Application {
 
 
@@ -37,18 +39,12 @@ public class Application {
 	}
 
 	@Bean
-	public OkHttpClient okHttpClient() {
-		return new OkHttpClient.Builder()
-				.readTimeout(15000, TimeUnit.MILLISECONDS)
-				.retryOnConnectionFailure(false)
-				.connectionPool(new ConnectionPool(300, 5L, TimeUnit.MINUTES))
-				.build();
-	}
-
-	@Bean
 	public MarketWatchInService marketWatchInService() {
+		DefaultAsyncHttpClientConfig.Builder clientBuilder = Dsl.config();
+		AsyncHttpClient client = Dsl.asyncHttpClient(clientBuilder);
+
 		System.out.println("ServiceBusApplication.marketWatchInService");
-		return new MarketWatchInServiceImpl("https://market.aix.kz/api", okHttpClient());
+		return new MarketWatchInServiceImpl("https://market.aix.kz/api", client);
 	}
 
 	public static void main(String[] args) {

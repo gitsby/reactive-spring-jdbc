@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 public class DbCacheRegisterImpl implements DbCacheRegister {
 
   private final PgPool pgPool;
-  private final DbCacheDao dbCacheDao;
   private final MessageDigest md;
+  private final DbCacheDao dao;
 
 
   @Override
   public String getLastResult(String hash) {
-    return dbCacheDao.getLastResult(hash);
+    return dao.getLastResult(hash);
   }
 
   @Override

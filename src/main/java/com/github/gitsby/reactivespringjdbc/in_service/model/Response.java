@@ -8,4 +8,13 @@ public class Response<T> {
   
   public T body;
 
+  @Override
+  public String toString() {
+    return "Response{" +
+        "url='" + url + '\'' +
+        ", isOk=" + isOk +
+        ", body=" + body +
+        '}';
+  }
+
 }

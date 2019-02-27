@@ -5,8 +5,7 @@ import com.github.gitsby.reactivespringjdbc.in_service.marker_watch.MarketWatchI
 import com.github.gitsby.reactivespringjdbc.in_service.model.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import org.asynchttpclient.AsyncHttpClient;
 
 /**
  * Implementation for MarkerWatchInService
@@ -15,7 +14,7 @@ import okhttp3.Request;
 public class MarketWatchInServiceImpl implements MarketWatchInService {
 
   private final String baseUrl;
-  private final OkHttpClient client;
+  private final AsyncHttpClient asyncHttpClient;
 
   @Override
   @SneakyThrows
@@ -23,15 +22,16 @@ public class MarketWatchInServiceImpl implements MarketWatchInService {
     Response<String> response = new Response<>();
     response.url = baseUrl + "/table/main-records22";
     try {
-      Request request = new Request.Builder()
-          .url(response.url)
-          .build();
-
-      try (okhttp3.Response resp = client.newCall(request).execute()) {
-        response.body = resp.body().string();
-        response.isOk = resp.isSuccessful();
-        return response;
-      }
+      asyncHttpClient
+          .prepareGet(response.url)
+          .execute()
+          .toCompletableFuture()
+          .thenApply(org.asynchttpclient.Response::getResponseBody)
+          .thenAccept(s -> response.body = s)
+          .join();
+      response.isOk = true;
+      System.out.println(response);
+      return response;
     } catch (Exception e) {
 
       System.err.println("Error during invoke " + response.url);
